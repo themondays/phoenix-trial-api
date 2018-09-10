@@ -16,7 +16,7 @@ defmodule Api.Documents.Document do
   @doc false
   def changeset(document, attrs) do
     document
-    |> cast(attrs, [:title, :file])
+    |> cast(attrs, [:title, :file, :user_id])
     |> validate_required([:title, :file])
   end
 end

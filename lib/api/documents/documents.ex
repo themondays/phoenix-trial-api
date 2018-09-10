@@ -22,6 +22,19 @@ defmodule Api.Documents do
   end
 
   @doc """
+  Returns the list of use documents.
+
+  ## Examples
+
+      iex> user_documents()
+      [%Document{}, ...]
+
+  """
+  def list_user_documents(user_id) do
+    Repo.all(from d in Document, where: d.user_id == ^user_id)
+  end
+
+  @doc """
   Gets a single document.
 
   Raises `Ecto.NoResultsError` if the Document does not exist.

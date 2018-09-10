@@ -3,19 +3,29 @@ defmodule ApiWeb.DocumentController do
 
   alias Api.Documents
   alias Api.Documents.Document
+  alias Api.Guardian
 
   action_fallback(ApiWeb.FallbackController)
 
   def index(conn, _params) do
+    user = Guardian.Plug.current_resource(conn)
+    documents = Documents.list_user_documents(user.id)
+    conn |> render("index.json", documents: documents)
+  end
+
+  def all(conn, _params) do
     documents = Documents.list_documents()
-    render(conn, "index.json", documents: documents)
+    conn |> render("index.json", documents: documents)
   end
 
   def create(conn, %{"document" => document_params}) do
+    user = Guardian.Plug.current_resource(conn)
+
+    document_params = Enum.into(%{"user_id" => user.id}, document_params)
+
     with {:ok, %Document{} = document} <- Documents.create_document(document_params) do
       conn
       |> put_status(:created)
-      # |> put_resp_header("location", document_path(conn, :show, document))
       |> render("show.json", document: document)
     end
   end
