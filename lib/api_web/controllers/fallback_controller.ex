@@ -12,6 +12,17 @@ defmodule ApiWeb.FallbackController do
     |> render(ApiWeb.ChangesetView, "error.json", changeset: changeset)
   end
 
+  def call(conn, {:ok, token, _c}) do
+    conn
+    |> render(ApiWeb.UserView, "jwt.json", token: token)
+  end
+
+  def call(conn, {:error, %Ecto.Changeset{} = changeset}) do
+    conn
+    |> put_status(:unprocessable_entity)
+    |> render(ApiWeb.ChangesetView, "error.json", changeset: changeset)
+  end
+
   def call(conn, {:error, :not_found}) do
     conn
     |> put_status(:not_found)
