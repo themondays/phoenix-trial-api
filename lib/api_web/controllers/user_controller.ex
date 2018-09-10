@@ -3,6 +3,7 @@ defmodule ApiWeb.UserController do
 
   alias Api.Accounts
   alias Api.Accounts.User
+  alias Api.Guardian
 
   action_fallback(ApiWeb.FallbackController)
 
@@ -13,8 +14,18 @@ defmodule ApiWeb.UserController do
 
   def create(conn, %{"user" => user_params}) do
     with {:ok, %User{} = user} <- Accounts.create_user(user_params),
-         {:ok, token, _claims} <- Guardian.encode_and_sign(user) do
-      conn |> render("jwt.json", jwt: token)
+         {:ok, token} <- Guardian.encode_and_sign(user) do
+          conn |> render("jwt.json", token: token)
+    end
+  end
+
+  def create(conn, %{"email" => email, "password" => password, "password_confirmation" => password_confirmation}) do
+
+    user_params = %{"email" => email, "password" => password, "password_confirmation" => password_confirmation}
+
+    with {:ok, %User{} = user} <- Accounts.create_user(user_params),
+         {:ok, token} <- Guardian.encode_and_sign(user) do
+      conn |> render("jwt.json", token: token)
     end
   end
 
@@ -40,13 +51,13 @@ defmodule ApiWeb.UserController do
   end
 
   def signin(conn, %{"email" => email, "password" => password}) do
-    require Logger
-    Logger.debug(inspect(Accounts.token_signin(email, password)))
-
     case Accounts.token_signin(email, password) do
       {:ok, token, _claims} ->
-        conn |> render("jwt.json", jwt: token)
-
+        conn |> render("jwt.json", token: token)
+      {:error, _reason} ->
+        conn
+        |> put_status(401)
+        |> render "error.json", error: _reason
       _ ->
         {:error, :unauthorized}
     end

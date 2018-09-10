@@ -10,13 +10,10 @@ defmodule Api.Accounts do
 
   import Comeonin.Bcrypt, only: [checkpw: 2, dummy_checkpw: 0]
 
-  require Logger
-
   def token_signin(email, password) do
     case email_password_auth(email, password) do
       {:ok, user} ->
         Guardian.encode_and_sign(user)
-
       _ ->
         {:error, :unauthorized}
     end

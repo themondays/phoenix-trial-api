@@ -2,8 +2,12 @@ defmodule ApiWeb.UserView do
   use ApiWeb, :view
   alias ApiWeb.UserView
 
-  def render("jwt.json", %{jwt: jwt}) do
-    %{jwt: jwt}
+  def render("jwt.json", %{token: token}) do
+    %{token: token}
+  end
+
+  def render("error.json", %{error: error}) do
+    %{error: error}
   end
 
   def render("index.json", %{users: users}) do
@@ -15,6 +19,10 @@ defmodule ApiWeb.UserView do
   end
 
   def render("user.json", %{user: user}) do
-    %{id: user.id, email: user.email, password_hash: user.password_hash}
+    %{id: user.id, email: user.email}
+  end
+
+  def render("documents.json", %{user: user}) do
+    %{documents: user.documents}
   end
 end
