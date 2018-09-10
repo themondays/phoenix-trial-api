@@ -1,6 +1,6 @@
 defmodule Api.Guardian.AuthPipeline do
   use Guardian.Plug.Pipeline,
-    otp_app: :Api,
+    otp_app: :api,
     module: Api.Guardian,
     error_handler: Api.AuthErrorHandler
 
