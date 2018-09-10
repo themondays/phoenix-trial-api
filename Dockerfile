@@ -7,6 +7,7 @@ ENV MIX_ENV ${MIX_ENV}
 RUN apt-get update && apt-get install -y \
  postgresql-client \
  inotify-tools \
+ clang \
  gcc \
  g++ \
  make
@@ -23,15 +24,11 @@ RUN mix local.rebar --force
 RUN mix archive.install --force https://github.com/phoenixframework/archives/raw/master/phoenix_new.ez
 RUN mix archive.install hex sobelow
 
-RUN curl -sL https://deb.nodesource.com/setup_6.x | bash -
-RUN apt-get install -y -q nodejs
-RUN npm i -g yarn
-
 # Set /app as workdir
 WORKDIR /app
 RUN mkdir -p deps
 ADD . /app
 
-RUN mix do deps.get, compile
+RUN mix do deps.get
 EXPOSE 4000
-CMD ["mix", "do", "ecto.migrate,", "phoenix.server"]
+CMD ["mix", "do", "ecto.create", "ecto.migrate,", "phoenix.server"]
