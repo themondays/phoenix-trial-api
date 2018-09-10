@@ -19,7 +19,10 @@ defmodule ApiWeb.Router do
 
   scope "/api/1.0", ApiWeb do
     pipe_through([:api, :jwt_authenticated])
-
+    get("/documents/all", DocumentController, :all)
     get("/profile", UserController, :show)
+    get("/profile/documents", DocumentController, :index)
+
+    post("/profile/documents/add", DocumentController, :create)
   end
 end
