@@ -1,0 +1,30 @@
+version: '2'
+
+services:
+  web:
+    build: .
+    env_file: .env
+    command: elixir --erl "+S 1" -S mix do ecto.create, ecto.migrate, phoenix.server
+    image: trialapi
+    environment:
+      - PORT=4000
+      - PG_HOST=postgres
+      - PG_USERNAME=postgres
+      - PG_PASSWORD=postgres
+    volumes:
+      - .:/app
+    ports:
+      - "4000:4000"
+    depends_on:
+      - postgres
+    expose:
+      - "4000"
+
+  postgres:
+    environment:
+      - POSTGRES_DB=trialapi
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    image: postgres:9.6-alpine
+    ports:
+      - "5432"
