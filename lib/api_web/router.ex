@@ -3,6 +3,7 @@ defmodule ApiWeb.Router do
   alias Api.Guardian
 
   pipeline :api do
+    plug CORSPlug, origin: "*"
     plug(:accepts, ["json"])
   end
 
